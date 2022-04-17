@@ -3,6 +3,7 @@ import {Routes, Route} from "react-router-dom";
 import Layout from "./Layout/Layout";
 import Home from "./Pages/Home/Home";
 import NotFound from "./Pages/NotFound/NotFound";
+import './i18n'
 
 function App() {
   return (
