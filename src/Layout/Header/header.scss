@@ -1,0 +1,20 @@
+.header{
+  padding: 50px 0;
+  border: 1px solid black;
+  &__nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &__list{
+    display: flex;
+    column-gap: 20px;
+    align-items: center;
+  }
+
+  &__link{
+    &.active{
+      color: black;
+    }
+  }
+}

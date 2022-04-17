@@ -1,0 +1,23 @@
+.home{
+  padding: 30px 0 0;
+
+  &__top{
+    display: flex;
+    column-gap: 200px;
+    margin-bottom: 40px;
+  }
+  &__list{
+    display: flex;
+    column-gap: 50px;
+  }
+  &__label{
+    display: flex;
+    column-gap: 20px;
+  }
+  &__item{
+    cursor: pointer;
+    &:hover{
+      color: goldenrod;
+    }
+  }
+}

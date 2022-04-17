@@ -10,5 +10,10 @@
 .container{
     width: 100%;
     margin: 0 auto;
+    max-width: 1200px;
 }
+
+@import "Layout/Header/header";
+
+@import "Pages/Home/home";
 
