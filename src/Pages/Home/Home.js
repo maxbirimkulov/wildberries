@@ -6,17 +6,16 @@ import preloader from './preloader.gif'
 
 const Home = () => {
     const [products, setProducts] = useState([])
-    const [date, setDate] = useState('')
+    const [date, setDate] = useState(new Date(Date.now() - 86400000).toISOString())
     const [time, setTime] = useState(1)
 
-    let today = new Date(Date.now()- 86400000)
+    let threeMonth = new Date(Date.now()- 2592000000 * 3)
 
 
     const key = 'ZTQzZjA0ZDUtZTkwZS00MDRjLTg0YjAtYTljYTBmYmVlYTg5'
 
     useEffect(() => {
-        setProducts([])
-        axios(`https://suppliers-stats.wildberries.ru/api/v1/supplier/sales?dateFrom=${date.length ? date : today.toISOString().slice(0, 10)}&limit=20&key=${key}`)
+        axios(`https://suppliers-stats.wildberries.ru/api/v1/supplier/sales?dateFrom=${threeMonth.toISOString().slice(0, 10)}&limit=20&key=${key}`)
             .then(({data}) => setProducts(data.filter((item, idx)=> data.map(el => el.nmId).indexOf(item.nmId) === idx ).map((item) => {
                     return {...item,
                         quantity : data.filter(el => el.nmId === item.nmId).reduce((acc, rec) => acc + rec.quantity ,item.quantity),
@@ -25,8 +24,7 @@ const Home = () => {
                 }))
             )
             .catch((err) =>  setProducts('error'))
-    },[date])
-
+    },[])
 
 
 
@@ -41,7 +39,7 @@ const Home = () => {
                             setDate(e.target[0].value)
                             e.target[0].value = ''
                         }}>
-                            <input id='date' className='home__date' type="date" />
+                            <input min={`${new Date(threeMonth).toISOString().slice(0,10)}`} max={`${new Date().toISOString().slice(0, 10)}`} required id='date' className='home__date' type="date" />
                             <Button type='submit' className='home__btn' variant="primary">Получить</Button>
                         </form>
                     </div>
@@ -50,7 +48,7 @@ const Home = () => {
                     <ul className='home__list'>
                         <li className={`home__item ${time === 1 && 'home__item_active'}`} onClick={() =>{
                             setTime(1)
-                            setDate('')
+                            setDate(new Date(Date.now() - 86400000).toISOString())
                         }}>
                             За последний день
                         </li>
@@ -85,7 +83,13 @@ const Home = () => {
                        </thead>
                        <tbody>
                        {
-                           products && products.map((item) => (
+                           products && products.filter((item) => {
+                               if (date.length) {
+                                   return Date.parse(item.date) > Date.parse(date)
+                               } else {
+                                   return item
+                               }
+                           }).map((item) => (
                                <tr key={item.nmId}>
                                    <td>
                                        {FormatDate(item.date)}
