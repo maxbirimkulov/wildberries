@@ -19,12 +19,7 @@ const Home = () => {
     useEffect(() => {
         axios(`https://suppliers-stats.wildberries.ru/api/v1/supplier/sales?dateFrom=${threeMonth.toISOString().slice(0, 10)}&limit=20&key=${key}`)
             .then(({data}) => {
-                    setProducts(data.filter((item, idx)=> data.map(el => el.nmId).indexOf(item.nmId) === idx ).map((item) => {
-                        return {...item,
-                            quantity : data.filter(el => el.nmId === item.nmId).reduce((acc, rec) => acc + rec.quantity ,item.quantity),
-                            totalPrice:  data.filter(el => el.nmId === item.nmId).reduce((acc, rec) => acc + rec.totalPrice ,item.totalPrice)
-                        }
-                    }))
+                    setProducts(data)
                     setArticle(data.filter((item, idx)=> data.map(el => el.nmId).indexOf(item.nmId) === idx ).map(item => {
                         return {name:item.supplierArticle, select: true}
                     }))
@@ -33,7 +28,17 @@ const Home = () => {
     },[])
 
 
-
+    const filterItem = (arr) => {
+       return  arr.filter((item) => {
+            return article.filter(el => el.select).map(el => el.name).includes(item.supplierArticle)
+        }).filter((item) => {
+            if (date.length) {
+                return Date.parse(item.date) > Date.parse(date)
+            } else {
+                return item
+            }
+        })
+    }
 
     return (
         <section className='home' onClick={(e) =>  {
@@ -102,6 +107,11 @@ const Home = () => {
                                            return Date.parse(item.date) > Date.parse(date)
                                        } else {
                                            return item
+                                       }
+                                   }).filter((item, idx,arr)=> arr.map(el => el.nmId).indexOf(item.nmId) === idx ).map((item,idx, arr) => {
+                                       return {...item,
+                                           quantity : filterItem(products).filter(el => el.nmId === item.nmId).reduce((acc, rec) => acc + rec.quantity ,item.quantity),
+                                           totalPrice:  filterItem(products).filter(el => el.nmId === item.nmId).reduce((acc, rec) => acc + rec.totalPrice ,item.totalPrice)
                                        }
                                    }).map((item) => (
                                        <tr key={item.nmId}>
